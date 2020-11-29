@@ -2,4 +2,6 @@
 pwd.txt
 venv/
 tut.py
-
+delete_row.py
+read_table.py
+test.py
