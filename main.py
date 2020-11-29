@@ -56,6 +56,46 @@ VALUES ("{new_max_id}", "{username}", "{hashed}");""")
         create_account()
 
 
-create_account()
+def store_password():
+
+    username = input("""Username
+>""")
+    mycursor.execute(f"""SELECT * FROM accounts WHERE username = '{username}' """)
+    myresult = mycursor.fetchone()
+    hashed_password = myresult[2].encode('utf-8')
+    password = input("""Password
+>""")
+    if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
+        account_id = myresult[0]
+        location = input("""Website name
+>""")
+        sub_username = input("""What is your username for that website?
+>""")
+        the_password = input("""What is your password for that website?
+        >""")
+        notes = input("""Any personal notes (DO NOT include confidential information) """)
+
+        key = password.encode('utf-8')
+        cipher = AES.new(key, AES.MODE_CBC)
+        plaintext = the_password.encode('utf-8')
+        ciphertext = cipher.encrypt(pad(plaintext, AES.block_size))
+
+        with open('cipher_file', 'wb') as c_file:
+            c_file.write(cipher.iv)
+            c_file.write(ciphertext)
+        file_pwd = open("cipher_file", "r")
+        pwd = (file_pwd.read())
+
+        if account_id != "" and location != "" and sub_username != "" and the_password != "":
+            mycursor.execute(f""" 
+            INSERT INTO stored_passwords (account_id, location, notes, the_password, username) 
+            VALUES ("{account_id}", "{location}", "{notes}", "{pwd}", "{username}");""")
+
+            mydb.commit()
+    else:
+        print("failure")
+
+
+store_password()
 
 
