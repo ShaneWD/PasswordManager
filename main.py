@@ -6,6 +6,8 @@ from Crypto.Cipher import AES
 import bcrypt
 import mysql.connector
 from os import path
+from Crypto.Util.Padding import pad # for encrypting
+from Crypto.Util.Padding import unpad
 
 
 file_pwd = open("pwd.txt", "r")
@@ -27,7 +29,7 @@ def create_account():
     if 3 < len(username) < 15:
         password = input("""Password
 >""")
-        if 5 < len(password) < 15:
+        if len(password) == 17:
             password = password.encode('utf-8')
             hashed = bcrypt.hashpw(password, bcrypt.gensalt(14))
             hashed = hashed.decode()
