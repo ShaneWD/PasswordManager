@@ -81,8 +81,9 @@ def store_password():
         pwd_salt = the_password+salt
         if account_id != "" and location != "" and sub_username != "" and the_password != "":
             mycursor.execute(f""" 
-INSERT INTO stored_passwords (account_id, location, notes, the_password, username, salt) 
-VALUES ("{account_id}", "{location}", "{notes}", aes_encrypt("{pwd_salt}", "{password}"), "{username}", "{salt}");""")
+INSERT INTO stored_passwords (account_id, location, notes, the_password, username, salt, website_username) 
+VALUES ("{account_id}", "{location}", "{notes}", aes_encrypt("{pwd_salt}", "{password}"), "{username}", "{salt}",
+"{sub_username}");""")
             mydb.commit()
     else:
         print("failure")
@@ -103,11 +104,16 @@ def read_password():
         sub_username = input("""What is your username for that website?
     >""")
         mycursor.execute(f"""
-SELECT REPLACE(CAST(AES_DECRYPT(the_password,'{password}') as char(10000)), salt, ""), salt
+SELECT *, REPLACE(CAST(AES_DECRYPT(the_password,'{password}') as char(10000)), salt, ""), salt
 FROM stored_passwords WHERE location = '{location}';
 """)
         myresult = mycursor.fetchone()
-        print(myresult[0])
+        print(f"""
+Website Name: {myresult[0]}
+Website Username: {myresult[6]}
+Website Password: {myresult[7]}
+Notes: {myresult[3]}
+""")
     else:
         print("Failure")
 
