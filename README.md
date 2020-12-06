@@ -29,3 +29,16 @@ CREATE TABLE `stored_passwords` (
 ```sql 
 ALTER TABLE stored_passwords CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
+###### utf8mb4 allows for 4 bytes per character, and allows more chacracter types. This is very benefitial for storing hashed passwords. 
+## Setting up MySQL connection
+```python
+pip install mysql-connector-python
+```
+- Create a seperate file titled *pwd.txt*. In pwd.txt, type the password you use to log in to your MySQL.
+- Also, if needed change the following code in main.py to your correct credentials
+```python
+mydb = mysql.connector.connect(host="localhost",
+                               user="root",
+                               password=pwd,
+                               database='pwd_manager')
+```
