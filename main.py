@@ -1,13 +1,9 @@
 # pip install mysql-connector-python
-# pip install pycryptodome
 # pip install bcrypt
 
-from Crypto.Cipher import AES
+
 import bcrypt
 import mysql.connector
-from os import path
-from Crypto.Util.Padding import pad  # for encrypting
-from Crypto.Util.Padding import unpad
 import random
 
 file_pwd = open("pwd.txt", "r")
@@ -27,34 +23,41 @@ def create_account():
     username = input("""Username
     >""")
     if 3 < len(username) < 15:
-        password = input("""Password
-    >""")
-        if 20 > len(password) > 5:
-            password = password.encode('utf-8')
-            hashed = bcrypt.hashpw(password, bcrypt.gensalt(14))
-            hashed = hashed.decode()
-            print(hashed)
-            mycursor.execute("""SELECT MAX(account_id) FROM accounts""")
-            # retrieves the row with the highest message_id number
-            old_max_id = mycursor.fetchone()
-            try:
-                new_max_id = old_max_id[0] + 1
-                # creates the highest id number that is one larger from the second largest.
-            except TypeError:
-                new_max_id = 1
-                # used for if the database has no rows/is wiped clean
+        mycursor.execute(f"""SELECT username FROM accounts WHERE username = '{username}' """)
+        myresult = mycursor.fetchone()
+        # in order to see if that username already exists in the database
+        if not myresult:
+            password = input("""Password
+        >""")
+            if 20 > len(password) > 5:
+                password = password.encode('utf-8')
+                hashed = bcrypt.hashpw(password, bcrypt.gensalt(14))
+                hashed = hashed.decode()
+                print(hashed)
+                mycursor.execute("""SELECT MAX(account_id) FROM accounts""")
+                # retrieves the row with the highest message_id number
+                old_max_id = mycursor.fetchone()
+                try:
+                    new_max_id = old_max_id[0] + 1
+                    # creates the highest id number that is one larger from the second largest.
+                except TypeError:
+                    new_max_id = 1
+                    # used for if the database has no rows/is wiped clean
 
-            mycursor.execute(f""" 
-INSERT INTO accounts (account_id, username, the_password) 
-VALUES ("{new_max_id}", "{username}", "{hashed}");""")
+                mycursor.execute(f""" 
+    INSERT INTO accounts (account_id, username, the_password) 
+    VALUES ("{new_max_id}", "{username}", "{hashed}");""")
 
-            mydb.commit()
+                mydb.commit()
 
-        elif len(password) <= 5:
-            print("Password is too short")
-            create_account()
-        elif len(password) >= 20:
-            print("Password is too large")
+            elif len(password) <= 5:
+                print("Password is too short")
+                create_account()
+            elif len(password) >= 20:
+                print("Password is too large")
+                create_account()
+        else:
+            print("username already exists. Try another \n")
             create_account()
     else:
         print("Invalid username length. Try again")
