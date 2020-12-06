@@ -76,21 +76,27 @@ def store_password():
         account_id = myresult[0]
         location = input("""Website name
     >""")
-        sub_username = input("""What is your username for that website?
-    >""")
-        the_password = input("""What is your password for that website?
-    >""")
-        notes = input("""Any personal notes (DO NOT include confidential information) """)
+        mycursor.execute(f"""SELECT username FROM accounts WHERE username = '{location}' """)
+        myresult = mycursor.fetchone()
+        # in order to see if that username already exists in the database
+        if not myresult:
+            sub_username = input("""What is your username for that website?
+        >""")
+            the_password = input("""What is your password for that website?
+        >""")
+            notes = input("""Any personal notes (DO NOT include confidential information) """)
 
-        salt = random.randint(9999, 99999)
-        salt = "salt" + str(salt)
-        pwd_salt = the_password + salt
-        if account_id != "" and location != "" and sub_username != "" and the_password != "":
-            mycursor.execute(f""" 
-INSERT INTO stored_passwords (account_id, location, notes, the_password, username, salt, website_username) 
-VALUES ("{account_id}", "{location}", "{notes}", aes_encrypt("{pwd_salt}", "{password}"), "{username}", "{salt}",
-"{sub_username}");""")
-            mydb.commit()
+            salt = random.randint(9999, 99999)
+            salt = "salt" + str(salt)
+            pwd_salt = the_password + salt
+            if account_id != "" and location != "" and sub_username != "" and the_password != "":
+                mycursor.execute(f""" 
+    INSERT INTO stored_passwords (account_id, location, notes, the_password, username, salt, website_username) 
+    VALUES ("{account_id}", "{location}", "{notes}", aes_encrypt("{pwd_salt}", "{password}"), "{username}", "{salt}",
+    "{sub_username}");""")
+                mydb.commit()
+            else:
+                print("That website name already exists")
     else:
         print("failure")
 
