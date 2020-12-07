@@ -76,7 +76,7 @@ def store_password():
         account_id = myresult[0]
         location = input("""Website name
     >""")
-        mycursor.execute(f"""SELECT username FROM accounts WHERE username = '{location}' """)
+        mycursor.execute(f"""SELECT username FROM stored_passwords WHERE location = '{location}' """)
         myresult = mycursor.fetchone()
         # in order to see if that username already exists in the database
         if not myresult:
@@ -95,8 +95,8 @@ def store_password():
     VALUES ("{account_id}", "{location}", "{notes}", aes_encrypt("{pwd_salt}", "{password}"), "{username}", "{salt}",
     "{sub_username}");""")
                 mydb.commit()
-            else:
-                print("That website name already exists")
+        else:
+            print("That website name already exists")
     else:
         print("failure")
 
@@ -128,4 +128,4 @@ Notes: {myresult[3]}
         print("Failure")
 
 
-create_account()
+store_password()
