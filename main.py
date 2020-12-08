@@ -5,6 +5,7 @@
 import bcrypt
 import mysql.connector
 import random
+import string
 
 file_pwd = open("pwd.txt", "r")
 # "pwd.txt" has plain text password for the database.
@@ -69,6 +70,7 @@ def store_password():
     >""")
     mycursor.execute(f"""SELECT * FROM accounts WHERE username = '{username}' """)
     myresult = mycursor.fetchone()
+    print(myresult)
     hashed_password = myresult[2].encode('utf-8')
     password = input("""Password
     >""")
@@ -76,8 +78,11 @@ def store_password():
         account_id = myresult[0]
         location = input("""Website name
     >""")
-        mycursor.execute(f"""SELECT username FROM stored_passwords WHERE location = '{location}' """)
+        mycursor.execute(f"""
+SELECT username FROM stored_passwords WHERE location = '{location}' 
+and username = '{username}'""")
         myresult = mycursor.fetchone()
+        print(myresult)
         # in order to see if that username already exists in the database
         if not myresult:
             sub_username = input("""What is your username for that website?
@@ -86,8 +91,14 @@ def store_password():
         >""")
             notes = input("""Any personal notes (DO NOT include confidential information) """)
 
-            salt = random.randint(9999, 99999)
-            salt = "salt" + str(salt)
+            def get_random_string(length):
+                # Random string with the combination of lower and upper case
+                letters = string.ascii_letters
+                result_str = ''.join(random.choice(letters) for i in range(length))
+                return result_str
+            salt_letter = get_random_string(8)
+            salt_number = random.randint(9999, 99999)
+            salt = "salt" + salt_letter + str(salt_number)
             pwd_salt = the_password + salt
             if account_id != "" and location != "" and sub_username != "" and the_password != "":
                 mycursor.execute(f""" 
