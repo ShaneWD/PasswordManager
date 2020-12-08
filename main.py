@@ -34,7 +34,6 @@ def create_account():
                 password = password.encode('utf-8')
                 hashed = bcrypt.hashpw(password, bcrypt.gensalt(14))
                 hashed = hashed.decode()
-                print(hashed)
                 mycursor.execute("""SELECT MAX(account_id) FROM accounts""")
                 # retrieves the row with the highest message_id number
                 old_max_id = mycursor.fetchone()
@@ -70,7 +69,6 @@ def store_password():
     >""")
     mycursor.execute(f"""SELECT * FROM accounts WHERE username = '{username}' """)
     myresult = mycursor.fetchone()
-    print(myresult)
     hashed_password = myresult[2].encode('utf-8')
     password = input("""Password
     >""")
@@ -82,7 +80,6 @@ def store_password():
 SELECT username FROM stored_passwords WHERE location = '{location}' 
 and username = '{username}'""")
         myresult = mycursor.fetchone()
-        print(myresult)
         # in order to see if that username already exists in the database
         if not myresult:
             sub_username = input("""What is your username for that website?
@@ -139,4 +136,4 @@ Notes: {myresult[3]}
         print("Failure")
 
 
-store_password()
+read_password()
