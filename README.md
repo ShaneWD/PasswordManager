@@ -1,3 +1,8 @@
+ # Demo
+ <image src= "https://github.com/ShaneWD/PasswordManager/blob/master/ezgif.com-gif-maker.gif">
+
+ ###### Speed in increased 150%
+ # Steps
  ## Create SQL Database 
  ###### I used MySQL Workbench 
  Create databse titled "pwd_manager". 
