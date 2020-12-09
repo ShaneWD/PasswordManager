@@ -1,7 +1,10 @@
  # Demo
  <image src= "https://github.com/ShaneWD/PasswordManager/blob/master/pwd_Manager(demo-gif).gif">
 
- ###### Speed in increased 150%
+ ###### Speed in increased to 150%
+ ### What the end-result look likes in the database
+ <image src = "https://github.com/ShaneWD/PasswordManager/blob/master/pwd_end_result.png" width = 800>
+ 
  # Steps
  ## Create SQL Database 
  ###### I used MySQL Workbench 
