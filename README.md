@@ -1,5 +1,5 @@
  # Demo
- <image src= "https://github.com/ShaneWD/PasswordManager/blob/master/ezgif.com-gif-maker.gif">
+ <image src= "https://github.com/ShaneWD/PasswordManager/blob/master/pwd_Manager(demo-gif).gif">
 
  ###### Speed in increased 150%
  # Steps
