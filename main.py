@@ -29,7 +29,7 @@ def create_account():
         # in order to see if that username already exists in the database
         if not myresult:
             password = input("""Password
-        >""")
+    >""")
             if 20 > len(password) > 5:
                 password = password.encode('utf-8')
                 hashed = bcrypt.hashpw(password, bcrypt.gensalt(14))
@@ -97,12 +97,26 @@ and username = '{username}'""")
             salt_number = random.randint(9999, 99999)
             salt = "salt" + salt_letter + str(salt_number)
             pwd_salt = the_password + salt
+            # To add a random set of characters at the end of the plain-text password before encryption.
+            # This is because two identical passwords will result in the same encrypted text. Thus, salt is needed.
+            # For decryption,the program looks at the row salt and removes those characters after decryption.
+            '''
+            ex: 
+            Password = pwd123
+            A salt is generated a and added to the password, as well as its own separate column. 
+            Before encryption, it looks is updated to (similar to): pwd123saltHnaH18723
+            Then it is encrypted 
+            After decryption, it looks like: pwd123saltHnaH18723
+            The program looks at the dedicated salt column, and removes it from the plain text after decryption. 
+            '''
             if account_id != "" and location != "" and sub_username != "" and the_password != "":
                 mycursor.execute(f""" 
     INSERT INTO stored_passwords (account_id, location, notes, the_password, username, salt, website_username) 
     VALUES ("{account_id}", "{location}", "{notes}", aes_encrypt("{pwd_salt}", "{password}"), "{username}", "{salt}",
     "{sub_username}");""")
                 mydb.commit()
+            else:
+                print("failure")
         else:
             print("That website name already exists")
     else:
@@ -125,6 +139,7 @@ def read_password():
 SELECT *, REPLACE(CAST(AES_DECRYPT(the_password,'{password}') as char(10000)), salt, ""), salt
 FROM stored_passwords WHERE username = '{username}' AND location = '{location}';
 """)
+        # the "REPLACE" command is the code responsible for removing the salt fom the plain-text password
         myresult = mycursor.fetchone()
         print(f"""
 Website Name: {myresult[0]}
@@ -136,4 +151,20 @@ Notes: {myresult[3]}
         print("Failure")
 
 
-read_password()
+request = input("""
+Commands
+    - "Create" : Create a master account. That password is used to encrypt
+    and decrypt passwords for websites. 
+    - "Store" : Save website credentials in database
+    - "Read" : View credentials for website
+>""").lower()
+if request == "create":
+    create_account()
+elif request == "store":
+    store_password()
+elif request == "read":
+    read_password()
+else:
+    print("failure")
+
+
