@@ -31,7 +31,17 @@ def create_account():
             password = input("""Password
     >""")
             if 20 > len(password) > 5:
-                password = password.encode('utf-8')
+                def get_random_string(length):
+                    # Random string with the combination of lower and upper case
+                    letters = string.ascii_letters
+                    result_str = ''.join(random.choice(letters) for i in range(length))
+                    return result_str
+
+                salt_letter = get_random_string(8)
+                salt_number = random.randint(9999, 99999)
+                salt = "salt" + salt_letter + str(salt_number)
+                pwd_salt = password + salt
+                password = pwd_salt.encode('utf-8')
                 hashed = bcrypt.hashpw(password, bcrypt.gensalt(14))
                 hashed = hashed.decode()
                 mycursor.execute("""SELECT MAX(account_id) FROM accounts""")
@@ -45,8 +55,8 @@ def create_account():
                     # used for if the database has no rows/is wiped clean
 
                 mycursor.execute(f""" 
-    INSERT INTO accounts (account_id, username, the_password) 
-    VALUES ("{new_max_id}", "{username}", "{hashed}");""")
+    INSERT INTO accounts (account_id, username, the_password, salt) 
+    VALUES ("{new_max_id}", "{username}", "{hashed}", "{salt}");""")
 
                 mydb.commit()
 
@@ -69,9 +79,12 @@ def store_password():
     >""")
     mycursor.execute(f"""SELECT * FROM accounts WHERE username = '{username}' """)
     myresult = mycursor.fetchone()
-    hashed_password = myresult[2].encode('utf-8')
+    hashed = myresult[2]
+    salt = myresult[3]
+    hashed_password = hashed.encode('utf-8')
     password = input("""Password
     >""")
+    password = password + salt
     if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
         account_id = myresult[0]
         location = input("""Website name
@@ -128,9 +141,12 @@ def read_password():
     >""")
     mycursor.execute(f"""SELECT * FROM accounts WHERE username = '{username}' """)
     myresult = mycursor.fetchone()
-    hashed_password = myresult[2].encode('utf-8')
+    hashed = myresult[2]
+    salt = myresult[3]
+    hashed_password = hashed.encode('utf-8')
     password = input("""Password
     >""")
+    password = password + salt
     if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
         account_id = myresult[0]
         location = input("""Website name
