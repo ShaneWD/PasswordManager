@@ -42,7 +42,7 @@ def create_account():
                 salt = "salt" + salt_letter + str(salt_number)
                 pwd_salt = password + salt
                 password = pwd_salt.encode('utf-8')
-                hashed = bcrypt.hashpw(password, bcrypt.gensalt(14))
+                hashed = bcrypt.hashpw(password, bcrypt.gensalt(16))
                 hashed = hashed.decode()
                 mycursor.execute("""SELECT MAX(account_id) FROM accounts""")
                 # retrieves the row with the highest message_id number
@@ -79,6 +79,8 @@ def store_password():
     >""")
     mycursor.execute(f"""SELECT * FROM accounts WHERE username = '{username}' """)
     myresult = mycursor.fetchone()
+    if not myresult:
+        return print("Failure")
     hashed = myresult[2]
     salt = myresult[3]
     hashed_password = hashed.encode('utf-8')
@@ -116,7 +118,7 @@ and username = '{username}'""")
             '''
             ex: 
             Password = pwd123
-            A salt is generated a and added to the password, as well as its own separate column. 
+            A salt is generated and added to the password, as well as its own separate column. 
             Before encryption, it looks is updated to (similar to): pwd123saltHnaH18723
             Then it is encrypted 
             After decryption, it looks like: pwd123saltHnaH18723
@@ -141,6 +143,8 @@ def read_password():
     >""")
     mycursor.execute(f"""SELECT * FROM accounts WHERE username = '{username}' """)
     myresult = mycursor.fetchone()
+    if not myresult:
+        return print("Failure")
     hashed = myresult[2]
     salt = myresult[3]
     hashed_password = hashed.encode('utf-8')
