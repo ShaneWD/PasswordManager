@@ -127,7 +127,7 @@ and username = '{username}'""")
             salt_number = random.randint(9999, 99999)
             salt = "salt" + salt_letter + str(salt_number)
             pwd_salt = the_password + salt
-            encrypted = aes_encrypt(password.encode(), pwd_salt)
+            encrypted = aes_encrypt(password.encode(), pwd_salt.encode())
             # To add a random set of characters at the end of the plain-text password before encryption.
             # This is because two identical passwords will result in the same encrypted text. Thus, salt is needed.
             # For decryption,the program looks at the row salt and removes those characters after decryption.
@@ -142,9 +142,9 @@ and username = '{username}'""")
             '''
             if account_id != "" and location != "" and sub_username != "" and the_password != "":
                 mycursor.execute(f""" 
-    INSERT INTO stored_passwords (account_id, location, notes, the_password, username, salt, website_username) 
-    VALUES ("{account_id}", "{location}", "{notes}", {encrypted}, "{username}", "{salt}",
-    "{sub_username}");""")
+    INSERT INTO stored_passwords (account_id, username, location, website_username, the_password, salt, notes) 
+    VALUES ("{account_id}", "{location}", "{notes}", "{encrypted}", "{username}", "{salt}",
+"{sub_username}")""")
                 mydb.commit()
             else:
                 print("failure")
