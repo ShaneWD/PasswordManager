@@ -90,10 +90,10 @@ def create_account():
 def store_password():
     username = input("""Username
     >""")
-    print(username)
+    if len(username) > 20 or len(username) < 2:
+        return print("invalid password length")
     mycursor.execute(f"""SELECT * FROM accounts WHERE username = '{username}' """)
     myresult = mycursor.fetchone()
-    print(myresult)
     if not myresult:
         return print("Failure")
     hashed = myresult[2]
@@ -116,7 +116,9 @@ and username = '{username}'""")
         >""")
             the_password = input("""What is your password for that website?
         >""")
-            notes = input("""Any personal notes (DO NOT include confidential information) """)
+            notes = input("""Any personal notes? 
+        >""")
+            notes = aes_encrypt(password.encode(), notes.encode())
 
             def get_random_string(length):
                 # Random string with the combination of lower and upper case
@@ -128,18 +130,6 @@ and username = '{username}'""")
             salt = "salt" + salt_letter + str(salt_number)
             pwd_salt = the_password + salt
             encrypted = aes_encrypt(password.encode(), pwd_salt.encode())
-            # To add a random set of characters at the end of the plain-text password before encryption.
-            # This is because two identical passwords will result in the same encrypted text. Thus, salt is needed.
-            # For decryption,the program looks at the row salt and removes those characters after decryption.
-            '''
-            ex: 
-            Password = pwd123
-            A salt is generated and added to the password, as well as its own separate column. 
-            Before encryption, it looks is updated to (similar to): pwd123saltHnaH18723
-            Then it is encrypted 
-            After decryption, it looks like: pwd123saltHnaH18723
-            The program looks at the dedicated salt column, and removes it from the plain text after decryption. 
-            '''
             if account_id != "" and location != "" and sub_username != "" and the_password != "":
                 mycursor.execute(f""" 
     INSERT INTO stored_passwords (account_id, username, location, website_username, the_password, salt, notes) 

@@ -25,20 +25,3 @@ def decrypt(key, source, decode=True):
     if data[-padding:] != bytes([padding]) * padding:  # Python 2.x: chr(padding) * padding
         raise ValueError("Invalid padding...")
     return data[:-padding]  # remove the padding
-
-my_password = b"secret_AES_key_string_to_encrypt/decrypt_with"
-my_data = b"input_string_to_encrypt/decrypt"
-
-print("key:  {}".format(my_password))
-print("data: {}".format(my_data))
-encrypted = encrypt(my_password, my_data)
-print("\nenc:  {}".format(encrypted))
-decrypted = decrypt(my_password, encrypted)
-print("dec:  {}".format(decrypted))
-print("\ndata match: {}".format(my_data == decrypted))
-print("\nSecond round....")
-encrypted = encrypt(my_password, my_data)
-print("\nenc:  {}".format(encrypted))
-decrypted = decrypt(my_password, encrypted)
-print("dec:  {}".format(decrypted))
-print("\ndata match: {}".format(my_data == decrypted))
