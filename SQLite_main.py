@@ -184,16 +184,17 @@ Commands
     - "Read" : View credentials for website
 >""").lower()
 
-if request == "create":
-    create_account()
-    mydb.close()
-elif request == "store":
-    store_password()
-    mydb.close()
-elif request == "read":
-    read_password()
-    mydb.close()
-    mydb.close()
-else:
-    print("failure")
-    mydb.close()
+if __name__ == '__main__':
+    if request == "create":
+        create_account()
+        mydb.close()
+    elif request == "store":
+        store_password()
+        mydb.close()
+    elif request == "read":
+        read_password()
+        mydb.close()
+        mydb.close()
+    else:
+        print("failure")
+        mydb.close()
