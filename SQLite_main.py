@@ -17,7 +17,7 @@ mycursor.execute("""CREATE TABLE accounts (
 '''
 '''
 mycursor.execute("""CREATE TABLE stored_passwords (
-        account_id INT NOT NULL UNIQUE REFERENCES accounts(account_id),
+        account_id INT NOT NULL REFERENCES accounts(account_id),
         username TEXT NOT NULL,
         location TEXT NOT NULL,
         website_username TEXT NOT NULL,
@@ -89,7 +89,7 @@ def create_account():
 
 def store_password():
     username = input("""Username
-    >""")
+    >""").lower()
     if len(username) > 20 or len(username) < 2:
         return print("invalid password length")
     mycursor.execute(f"""SELECT * FROM accounts WHERE username = '{username}' """)
@@ -105,7 +105,7 @@ def store_password():
     if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
         account_id = myresult[0]
         location = input("""Website name
-    >""")
+    >""").lower()
         mycursor.execute(f"""
 SELECT username FROM stored_passwords WHERE location = '{location}' 
 and username = '{username}'""")
@@ -133,8 +133,8 @@ and username = '{username}'""")
             if account_id != "" and location != "" and sub_username != "" and the_password != "":
                 mycursor.execute(f""" 
     INSERT INTO stored_passwords (account_id, username, location, website_username, the_password, salt, notes) 
-    VALUES ("{account_id}", "{location}", "{notes}", "{encrypted}", "{username}", "{salt}",
-"{sub_username}")""")
+    VALUES ("{account_id}", "{username}", "{location}", "{sub_username}", "{encrypted}", "{salt}",
+"{notes}")""")
                 mydb.commit()
             else:
                 print("failure")
@@ -144,4 +144,56 @@ and username = '{username}'""")
         print("failure")
 
 
-store_password()
+def read_password():
+    username = input("""Username
+    >""").lower()
+    mycursor.execute(f"""SELECT * FROM accounts WHERE username = '{username}' """)
+    myresult = mycursor.fetchone()
+    if not myresult:
+        return print("Failure")
+    hashed = myresult[2]
+    salt = myresult[3]
+    hashed_password = hashed.encode('utf-8')
+    password = input("""Password
+    >""")
+    password = password + salt
+    if bcrypt.checkpw(password.encode('utf-8'), hashed_password):
+        account_id = myresult[0]
+        location = input("""Website name
+    >""").lower()
+        mycursor.execute(f"""
+SELECT * FROM stored_passwords WHERE username = '{username}' AND location = '{location}';
+""")
+        myresult = mycursor.fetchone()
+        print(myresult)
+        print(f"""
+Website Name: {myresult[2]}
+Website Username: {myresult[3]}
+Website Password: {aes_decrypt(password.encode(), myresult[4])}
+Notes: {aes_decrypt(password.encode(), myresult[6])}
+""")
+    else:
+        print("Failure")
+
+
+request = input("""
+Commands
+    - "Create" : Create a master account. That password is used to encrypt
+    and decrypt passwords for websites. 
+    - "Store" : Save website credentials in database
+    - "Read" : View credentials for website
+>""").lower()
+
+if request == "create":
+    create_account()
+    mydb.close()
+elif request == "store":
+    store_password()
+    mydb.close()
+elif request == "read":
+    read_password()
+    mydb.close()
+    mydb.close()
+else:
+    print("failure")
+    mydb.close()
