@@ -116,7 +116,7 @@ and username = '{username}'""")
         >""")
             the_password = input("""What is your password for that website?
         >""")
-            notes = input("""Any personal notes? 
+            notes = input("""Any personal notes? Such as the website link?
         >""")
             notes = aes_encrypt(password.encode(), notes.encode())
 
@@ -166,10 +166,13 @@ SELECT * FROM stored_passwords WHERE username = '{username}' AND location = '{lo
 """)
         myresult = mycursor.fetchone()
         print(myresult)
+        website_password = (aes_decrypt(password.encode(), myresult[4]))
+        salt = myresult[5]
+        web_pwd_no_salt = website_password.replace(salt, "")
         print(f"""
 Website Name: {myresult[2]}
 Website Username: {myresult[3]}
-Website Password: {aes_decrypt(password.encode(), myresult[4])}
+Website Password: {web_pwd_no_salt}
 Notes: {aes_decrypt(password.encode(), myresult[6])}
 """)
     else:
