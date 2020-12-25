@@ -118,7 +118,8 @@ and username = '{username}'""")
         >""")
             notes = input("""Any personal notes? Such as the website link?
         >""")
-            notes = aes_encrypt(password.encode(), notes.encode())
+            notes_encrypt = aes_encrypt(password.encode(), notes.encode())
+            notes_encrypt_x2 = aes_encrypt(password.encode(), notes_encrypt.encode())
 
             def get_random_string(length):
                 # Random string with the combination of lower and upper case
@@ -129,12 +130,13 @@ and username = '{username}'""")
             salt_number = random.randint(9999, 99999)
             salt = "salt" + salt_letter + str(salt_number)
             pwd_salt = the_password + salt
-            encrypted = aes_encrypt(password.encode(), pwd_salt.encode())
+            encrypted_pwd = aes_encrypt(password.encode(), pwd_salt.encode())
+            encrypted_pwd_x2 = aes_encrypt(password.encode(), encrypted_pwd.encode())
             if account_id != "" and location != "" and sub_username != "" and the_password != "":
                 mycursor.execute(f""" 
     INSERT INTO stored_passwords (account_id, username, location, website_username, the_password, salt, notes) 
-    VALUES ("{account_id}", "{username}", "{location}", "{sub_username}", "{encrypted}", "{salt}",
-"{notes}")""")
+    VALUES ("{account_id}", "{username}", "{location}", "{sub_username}", "{encrypted_pwd_x2}", "{salt}",
+"{notes_encrypt_x2}")""")
                 mydb.commit()
             else:
                 print("failure")
@@ -165,15 +167,17 @@ def read_password():
 SELECT * FROM stored_passwords WHERE username = '{username}' AND location = '{location}';
 """)
         myresult = mycursor.fetchone()
-        print(myresult)
-        website_password = (aes_decrypt(password.encode(), myresult[4]))
+        decrypt_web_pwd = aes_decrypt(password.encode(), (myresult[4]))
+        decrypt_web_pwd_x2 = aes_decrypt(password.encode(), decrypt_web_pwd)
         salt = myresult[5]
-        web_pwd_no_salt = website_password.replace(salt, "")
+        web_pwd_no_salt = decrypt_web_pwd_x2.replace(salt, "")
+        decrypt_notes = aes_decrypt(password.encode(), myresult[6])
+        decrypt_notes_x2 = aes_decrypt(password.encode(), decrypt_notes)
         print(f"""
 Website Name: {myresult[2]}
 Website Username: {myresult[3]}
 Website Password: {web_pwd_no_salt}
-Notes: {aes_decrypt(password.encode(), myresult[6])}
+Notes: {decrypt_notes_x2}
 """)
     else:
         print("Failure")
