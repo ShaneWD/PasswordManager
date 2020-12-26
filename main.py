@@ -1,6 +1,4 @@
-# pip install mysql-connector-python
-# pip install bcrypt
-
+# pip install -r requirements.txt
 
 import bcrypt
 import mysql.connector

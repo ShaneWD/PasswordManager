@@ -1,0 +1,8 @@
+pip install -r requirements.txt
+bcrypt==3.2.0
+cffi==1.14.4
+mysql-connector-python==8.0.22
+protobuf==3.14.0
+pycparser==2.20
+pycryptodome==3.9.9
+six==1.15.0
