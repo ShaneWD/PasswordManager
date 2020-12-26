@@ -35,8 +35,8 @@ def create_account():
                     result_str = ''.join(random.choice(letters) for i in range(length))
                     return result_str
 
-                salt_letter = get_random_string(8)
-                salt_number = random.randint(9999, 99999)
+                salt_letter = get_random_string(10)
+                salt_number = random.randint(99999, 999999)
                 salt = "salt" + salt_letter + str(salt_number)
                 pwd_salt = password + salt
                 password = pwd_salt.encode('utf-8')
@@ -106,9 +106,9 @@ and username = '{username}'""")
                 letters = string.ascii_letters
                 result_str = ''.join(random.choice(letters) for i in range(length))
                 return result_str
-            salt_letter = get_random_string(8)
-            salt_number = random.randint(9999, 99999)
-            salt = "salt" + salt_letter + str(salt_number)
+            salt_letter = get_random_string(10)
+            salt_number = random.randint(99999, 999999)
+            salt = salt_letter + str(salt_number)
             pwd_salt = the_password + salt
             # To add a random set of characters at the end of the plain-text password before encryption.
             # This is because two identical passwords will result in the same encrypted text. Thus, salt is needed.
