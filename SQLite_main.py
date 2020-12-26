@@ -52,7 +52,7 @@ def create_account():
                     return result_str
 
                 salt_letter = get_random_string(10)
-                salt_number = random.randint(99999, 999999)
+                salt_number = random.randint(999999999, 9999999999)
                 salt = "salt" + salt_letter + str(salt_number)
                 pwd_salt = password + salt
                 password = pwd_salt.encode('utf-8')
@@ -127,7 +127,7 @@ and username = '{username}'""")
                 result_str = ''.join(random.choice(letters) for i in range(length))
                 return result_str
             salt_letter = get_random_string(10)
-            salt_number = random.randint(99999, 999999)
+            salt_number = random.randint(999999999, 9999999999)
             salt = salt_letter + str(salt_number)
             pwd_salt = the_password + salt
             encrypted_pwd = aes_encrypt(password.encode(), pwd_salt.encode())
