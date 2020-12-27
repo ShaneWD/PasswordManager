@@ -3,7 +3,8 @@ import random
 import string
 import bcrypt
 from AES_encryption import encrypt as aes_encrypt, decrypt as aes_decrypt
-
+# pip install -r requirements.txt
+# for this file, MySQL is NOT needed.
 
 mydb = sqlite3.connect('SQLite_PWD.db')
 
@@ -51,9 +52,9 @@ def create_account():
                     result_str = ''.join(random.choice(letters) for i in range(length))
                     return result_str
 
-                salt_letter = get_random_string(10)
-                salt_number = random.randint(999999999, 9999999999)
-                salt = "salt" + salt_letter + str(salt_number)
+                salt_letter = get_random_string(12)
+                salt_number = random.randint(99999999999, 999999999999)
+                salt = salt_letter + str(salt_number)
                 pwd_salt = password + salt
                 password = pwd_salt.encode('utf-8')
                 hashed = bcrypt.hashpw(password, bcrypt.gensalt(16))
@@ -126,8 +127,8 @@ and username = '{username}'""")
                 letters = string.ascii_letters
                 result_str = ''.join(random.choice(letters) for i in range(length))
                 return result_str
-            salt_letter = get_random_string(10)
-            salt_number = random.randint(999999999, 9999999999)
+            salt_letter = get_random_string(12)
+            salt_number = random.randint(99999999999, 999999999999)
             salt = salt_letter + str(salt_number)
             pwd_salt = the_password + salt
             encrypted_pwd = aes_encrypt(password.encode(), pwd_salt.encode())
@@ -200,7 +201,6 @@ if __name__ == '__main__':
         mydb.close()
     elif request == "read":
         read_password()
-        mydb.close()
         mydb.close()
     else:
         print("failure")

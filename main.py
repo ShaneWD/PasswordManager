@@ -4,6 +4,7 @@ import bcrypt
 import mysql.connector
 import random
 import string
+# pip install -r requirements.txt
 
 file_pwd = open("pwd.txt", "r")
 # "pwd.txt" has plain text password for the database.
@@ -35,9 +36,9 @@ def create_account():
                     result_str = ''.join(random.choice(letters) for i in range(length))
                     return result_str
 
-                salt_letter = get_random_string(10)
-                salt_number = random.randint(999999999, 9999999999)
-                salt = "salt" + salt_letter + str(salt_number)
+                salt_letter = get_random_string(12)
+                salt_number = random.randint(99999999999, 999999999999)
+                salt = salt_letter + str(salt_number)
                 pwd_salt = password + salt
                 password = pwd_salt.encode('utf-8')
                 hashed = bcrypt.hashpw(password, bcrypt.gensalt(16))
@@ -106,8 +107,8 @@ and username = '{username}'""")
                 letters = string.ascii_letters
                 result_str = ''.join(random.choice(letters) for i in range(length))
                 return result_str
-            salt_letter = get_random_string(10)
-            salt_number = random.randint(999999999, 9999999999)
+            salt_letter = get_random_string(12)
+            salt_number = random.randint(99999999999, 999999999999)
             salt = salt_letter + str(salt_number)
             pwd_salt = the_password + salt
             # To add a random set of characters at the end of the plain-text password before encryption.
@@ -176,13 +177,16 @@ Commands
     - "Store" : Save website credentials in database
     - "Read" : View credentials for website
 >""").lower()
-if request == "create":
-    create_account()
-elif request == "store":
-    store_password()
-elif request == "read":
-    read_password()
-else:
-    print("failure")
-
-
+if __name__ == "__main__":
+    if request == "create":
+        create_account()
+        mycursor.close()
+    elif request == "store":
+        store_password()
+        mycursor.close()
+    elif request == "read":
+        read_password()
+        mycursor.close()
+    else:
+        print("failure")
+        mycursor.close()
