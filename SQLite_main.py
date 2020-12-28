@@ -3,36 +3,46 @@ import random
 import string
 import bcrypt
 from AES_encryption import encrypt as aes_encrypt, decrypt as aes_decrypt
+import os
+from os import path
 # pip install -r requirements.txt
 # for this file, MySQL is NOT needed.
 
-mydb = sqlite3.connect('SQLite_PWD.db')
 
-mycursor = mydb.cursor()
-'''
-mycursor.execute("""CREATE TABLE accounts (
-        account_id INT NOT NULL UNIQUE PRIMARY key,
-        username TEXT NOT NULL,
-        password TEXT NOT NULL
-                )""")
-'''
-'''
-mycursor.execute("""CREATE TABLE stored_passwords (
-        account_id INT NOT NULL REFERENCES accounts(account_id),
-        username TEXT NOT NULL,
-        location TEXT NOT NULL,
-        website_username TEXT NOT NULL,
-        the_password TEXT NOT NULL,
-        salt TEXT NOT NULL,
-        notes TEXT NULL
-                )""")
-'''
-# account_id, location, notes, the_password, username, salt, website_username
-# mycursor.execute("INSERT INTO accounts VALUES ('1', 'delete', 'delete' )")
-# mycursor.execute("SELECT * FROM ACCOUNTS")
-# data = mycursor.fetchall()
+if path.exists('SQLite_PWD.db'):
 
-# mydb.commit()
+    mydb = sqlite3.connect('SQLite_PWD.db')
+
+    mycursor = mydb.cursor()
+
+else:
+
+    mydb = sqlite3.connect('SQLite_PWD.db')
+
+    mycursor = mydb.cursor()
+
+    print("Creating tables")
+    mycursor.execute("""CREATE TABLE accounts (
+                account_id INT NOT NULL UNIQUE PRIMARY key,
+                username TEXT NOT NULL,
+                password TEXT NOT NULL,
+                salt TEXT NOT NULL
+                        )""")
+    mydb.commit()
+
+    mycursor.execute("""CREATE TABLE stored_passwords (
+                account_id INT NOT NULL REFERENCES accounts(account_id),
+                username TEXT NOT NULL,
+                location TEXT NOT NULL,
+                website_username TEXT NOT NULL,
+                the_password TEXT NOT NULL,
+                salt TEXT NOT NULL,
+                notes TEXT NULL
+                        )""")
+
+    mydb.commit()
+    print(""" Done """)
+    os.system("clear")
 
 
 def create_account():
