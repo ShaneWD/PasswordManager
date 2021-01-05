@@ -47,7 +47,7 @@ ALTER TABLE stored_passwords CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 pip install mysql-connector-python
 ```
 - Create a seperate file titled *pwd.txt*. In pwd.txt, type the password you use to log in to your MySQL.
-- Also, if needed change, the following code in main.py to your correct credentials
+- Also, if needed, change the following code in main.py to your correct credentials
 ```python
 mydb = mysql.connector.connect(host="localhost",
                                user="root",
